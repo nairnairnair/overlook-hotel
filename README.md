@@ -1,4 +1,4 @@
-# Webpack Starter Kit
+# The Overlook Hotel
 
 ## Clone This Repo
 
