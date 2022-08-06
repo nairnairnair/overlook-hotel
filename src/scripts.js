@@ -81,6 +81,12 @@ function hide(elements) {
         aboutUsButton,
         dashboardView,
     ])
+    dashboardView.innerHTML = 
+    `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
+    <p class='dashboard-room-bookings-text'>Your bookings:</p>    
+    <p class='dashboard-room-bookings-info'></p>
+    <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
+    <p class='dashboard-room-cost-total-info'></p>`
   }
 
   function displayAboutUsView(){
