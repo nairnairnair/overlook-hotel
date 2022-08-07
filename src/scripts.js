@@ -18,6 +18,9 @@ const homepageView = document.querySelector('.homepage-view');
 const dashboardView = document.querySelector('.dashboard-view');
 const aboutUsView = document.querySelector('.about-us-view');
 const datePicker = document.getElementById("datePicker");
+const typePicker = document.getElementById('typePicker')
+const calendarButton = document.querySelector(".calendar-button")
+
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -25,6 +28,7 @@ window.addEventListener('load', getPromiseData);
 homepageButton.addEventListener('click', displayHomepageView);
 dashboardButton.addEventListener('click', displayDashboardView);
 aboutUsButton.addEventListener('click', displayAboutUsView);
+calendarButton.addEventListener('click', getAvailableRoomsByDate);
 
   //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
 let fetchData = (data) =>  {
@@ -56,7 +60,6 @@ function getPromiseData() {
     // console.log('roomba', room)
     existingBookings = customer.checkExistingBookings(bookingData)
     totalMoneySpent = customer.checkTotalMoneySpent(roomData)
-    getAvailableRoomsByDate()
   })
 
 }
@@ -164,35 +167,52 @@ function displayAboutUsView(){
     return mappedBookings
   }
 
-  console.log(datePicker.value)
-
-  function selectedDateConverter(){
-
-  }
-
   function getAvailableRoomsByDate (){
+    let convertedDate = datePicker.value.split('-').join('/')
     let availableRooms = []
+    if (datePicker.value === '') {homepageView.innerHTML += `<p>Please select a date</p>`}
     let bookedRooms = bookingData.filter((booking)=>{
-      if (booking.date.includes('2022/01/30')){
+      if (booking.date.includes(convertedDate)){
         return booking
       }
     }).map((booking)=>{
       return booking.roomNumber
     })
-
     console.log('booked rooms:', bookedRooms)
-
     roomData.filter((room)=>{
       if (!bookedRooms.includes(room.number)) {
         availableRooms.push(room)
       }
     }) 
-    console.log('available Rooms:', availableRooms)
-    return availableRooms
+    console.log('date filtered Rooms:', availableRooms)
+    let typeFilteredRooms = availableRooms.filter((room)=>{
+      if (typePicker.value === 'any') { 
+        return room
+      } else if (typePicker.value === room.roomType){
+        return room
+      } 
+    }) 
+    console.log('type filtered Rooms:', typeFilteredRooms)
+    return typeFilteredRooms
   }
 
+  // function getAvailableRoomsByType() {
+  //   return roomData.filter((room)=>{
+  //     if (typePicker.value === room.roomType){
+  //         return room
+  //     }
+  //   }) 
+  // }
   
-
+  // console.log('arch', filteredRooms)
+  // return filteredRooms
+  // let chosenType;
+  // if (typePicker.value === 'any'){chosenType = 'any'}
+  // else if (typePicker.value === 'junior suite'){chosenType = 'junior suite'}
+  // else if (typePicker.value === 'residential suite'){chosenType = 'residential suite'}
+  // else if (typePicker.value === 'single room'){chosenType = 'single room'}
+  // else if (typePicker.value === 'suite'){chosenType = 'suite'}
+  // console.log('chozen', chosenType)
   // +capture the date they input, 
   // +filter it against the entire array of bookings to make sure they don’t contain the `date` in question,
   // +take that array of bookings that meet that condition and map out the
