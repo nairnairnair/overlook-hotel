@@ -7,17 +7,12 @@ class Customer {
         this.name = customerData.name;
         this.bookings = [];
         this.bookedRooms = [];
-        // this.totalMoneySpent
+        this.totalMoneySpent = 0;
     }
 
-    // getNewCustomerBooking(room){
-    //     let newRoom = new Room(room)
-    //     this.bookings.push(newRoom)
-    //     this.totalMoneySpent += room.costPerNight
-    // }
-
-    checkExistingBookings(bookings){
-      let filteredBookings = bookings.bookings.filter((booking)=>{
+    checkExistingBookings(bookinz){
+        console.log('b', bookinz)
+      let filteredBookings = bookinz.filter((booking)=>{
           return this.id === booking.userID
         })
         filteredBookings.forEach((booking) => {
@@ -28,7 +23,7 @@ class Customer {
 
     checkTotalMoneySpent(rooms){
         let roomNumbers = this.bookings.map((booking)=> booking.roomNumber)
-        rooms.rooms.forEach((room)=>{
+        rooms.forEach((room)=>{
             if (roomNumbers.includes(room.number)){
                 this.bookedRooms.push(room)
             }
@@ -36,8 +31,15 @@ class Customer {
         let totalCost = this.bookedRooms.reduce((acc, room) => {
             return acc += room.costPerNight
         }, 0)
+            this.totalMoneySpent = totalCost
           return totalCost
     }
+
+        // getNewCustomerBooking(room){
+    //     let newRoom = new Room(room)
+    //     this.bookings.push(newRoom)
+    //     this.totalMoneySpent += room.costPerNight
+    // }
 }
 
 module.exports = Customer
