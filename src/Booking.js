@@ -1,3 +1,6 @@
+// import Customer from './Customer.js';
+// import Room from './Room.js';
+
 class Booking {
     constructor(bookingData){
         this.id = bookingData.id;
