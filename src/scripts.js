@@ -3,6 +3,7 @@
 import './css/styles.css';
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 import './images/turing-logo.png'
+import './images/h.png'
 import Customer from '../src/Customer.js';
 import Booking from '../src/Booking.js';
 import Room from '../src/Room.js';
@@ -16,6 +17,7 @@ const loginView = document.querySelector('.login-view');
 const homepageView = document.querySelector('.homepage-view');
 const dashboardView = document.querySelector('.dashboard-view');
 const aboutUsView = document.querySelector('.about-us-view');
+const datePicker = document.getElementById("datePicker");
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -43,17 +45,18 @@ let totalMoneySpent;
 function getPromiseData() {
   Promise.all( [fetchData('customers'), fetchData('bookings'), fetchData('rooms')]).then(data => {
     customerData = data[0].customers;
-    console.log('a', data[0].customers)
+    // console.log('a', data[0].customers)
     bookingData = data[1].bookings;
     roomData = data[2].rooms;
     customer = new Customer(customerData[randomIndex(customerData)]);
-    console.log('custy', customer)
+    // console.log('custy', customer)
     booking = new Booking(bookingData);
-    console.log('book em', booking)
+    // console.log('book em', booking)
     room = new Room(roomData)
-    console.log('roomba', room)
+    // console.log('roomba', room)
     existingBookings = customer.checkExistingBookings(bookingData)
     totalMoneySpent = customer.checkTotalMoneySpent(roomData)
+    getAvailableRoomsByDate()
   })
 
 }
@@ -117,11 +120,11 @@ function displayDashboardView(){
       aboutUsButton,
       dashboardView,
   ])
-  console.log('x', customer.name)
-  console.log('y', customer.bookings)
-  console.log('z', customer.totalMoneySpent)
+  // console.log('x', customer.name)
+  // console.log('y', customer.bookings)
+  // console.log('z', customer.totalMoneySpent)
   
-  console.log('jk', bookingData)
+  // console.log('jk', bookingData)
 
   dashboardView.innerHTML = 
   `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
@@ -160,3 +163,39 @@ function displayAboutUsView(){
     }).join('')
     return mappedBookings
   }
+
+  console.log(datePicker.value)
+
+  function selectedDateConverter(){
+
+  }
+
+  function getAvailableRoomsByDate (){
+    let availableRooms = []
+    let bookedRooms = bookingData.filter((booking)=>{
+      if (booking.date.includes('2022/01/30')){
+        return booking
+      }
+    }).map((booking)=>{
+      return booking.roomNumber
+    })
+
+    console.log('booked rooms:', bookedRooms)
+
+    roomData.filter((room)=>{
+      if (!bookedRooms.includes(room.number)) {
+        availableRooms.push(room)
+      }
+    }) 
+    console.log('available Rooms:', availableRooms)
+    return availableRooms
+  }
+
+  
+
+  // +capture the date they input, 
+  // +filter it against the entire array of bookings to make sure they don’t contain the `date` in question,
+  // +take that array of bookings that meet that condition and map out the
+  // `roomNumber`s with no duplicates, 
+  // +take that new array of numbers and filter through every room, 
+  // +gathering the rooms that have a matching `number` key
