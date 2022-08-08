@@ -30,6 +30,7 @@ homepageButton.addEventListener('click', displayHomepageView);
 dashboardButton.addEventListener('click', displayDashboardView);
 aboutUsButton.addEventListener('click', displayAboutUsView);
 calendarButton.addEventListener('click', getAvailableRoomsByDateAndType);
+searchResultsContainer.addEventListener('click', selectRoomToBook)
 
   //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
 let fetchData = (data) =>  {
@@ -196,16 +197,31 @@ function displayAboutUsView(){
     typeFilteredRooms.forEach((room)=>{
       searchResultsContainer.innerHTML += `
       <section class="room-to-select">
-      <p class="room-number">Room Number: ${room.number}</p>
-      <p class="room-type">Room Type: ${room.roomType}</p>
-      <p class="room-bidet">Bidet in Room: ${room.bidet}</p>
-      <p class="room-bed-size">Bed Size: ${room.bedSize}</p>
-      <p class="room-number-of-beds">Number of Beds: ${room.numBeds}</p>
-      <p class="room-cost-per-night">Cost Per Night:${room.costPerNight}</p>
-      </section>
-      `
+        <div class="room-info-container">
+          <p class="room-number">Room Number: ${room.number}</p>
+          <p class="room-type">Room Type: ${room.roomType}</p>
+          <p class="room-bidet">Bidet in Room: ${room.bidet}</p>
+          <p class="room-bed-size">Bed Size: ${room.bedSize}</p>
+          <p class="room-number-of-beds">Number of Beds: ${room.numBeds}</p>
+          <p class="room-cost-per-night">Cost Per Night: $${room.costPerNight}</p>
+        </div>
+        <div>
+          <h3 class="book-this-room">Book this room for the selected date?</h3>
+          <button tabindex="0" class='book-button' id='bookButton'>Book Room</button>
+        </div>
+      </section>`
     })
     console.log('type filtered Rooms:', typeFilteredRooms)
     return typeFilteredRooms
   }
 
+function selectRoomToBook(event) {
+  event.preventDefault()
+  if (event.target.classList.contains("book-button")) {
+    postBooking()
+  }
+}
+
+function postBooking(){
+  
+}
