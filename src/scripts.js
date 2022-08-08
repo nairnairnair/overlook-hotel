@@ -1,5 +1,4 @@
 //~~~~~~~~~~~~~~~~~~~~~~~ Imports ~~~~~~~~~~~~~~~~~~~~~~~
-// An example of how you tell webpack to use a CSS (SCSS) file
 import './css/styles.css';
 // An example of how you tell webpack to use an image (also need to link to it in the index.html)
 import './images/turing-logo.png'
@@ -21,6 +20,7 @@ const datePicker = document.getElementById("datePicker");
 const typePicker = document.getElementById('typePicker')
 const calendarButton = document.querySelector(".calendar-button")
 const searchResultsContainer = document.querySelector(".search-results-container")
+const roomPickerErrorMessage = document.querySelector(".room-picker-error-message")
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,12 +32,7 @@ aboutUsButton.addEventListener('click', displayAboutUsView);
 calendarButton.addEventListener('click', getAvailableRoomsByDateAndType);
 searchResultsContainer.addEventListener('click', selectRoomToBook)
 
-  //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
-let fetchData = (data) =>  {
-  return fetch(`http://localhost:3001/api/v1/${data}`)
-    .then(rsp => rsp.json() )
-    .catch(error => console.log(error));
-}
+//~~~~~~~~~~~~~~~~~~~~~~~ Global Variables ~~~~~~~~~~~~~~~~~~~~~~~
 
 let customerData;
 let bookingData;
@@ -47,6 +42,14 @@ let booking;
 let room;
 let existingBookings;
 let totalMoneySpent;
+
+//~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
+
+let fetchData = (data) =>  {
+  return fetch(`http://localhost:3001/api/v1/${data}`)
+    .then(rsp => rsp.json() )
+    .catch(error => console.log(error));
+}
 
 function getPromiseData() {
   Promise.all( [fetchData('customers'), fetchData('bookings'), fetchData('rooms')]).then(data => {
@@ -63,7 +66,16 @@ function getPromiseData() {
     existingBookings = customer.checkExistingBookings(bookingData)
     totalMoneySpent = customer.checkTotalMoneySpent(roomData)
   })
+}
 
+function postBooking(targetRoomNumber){
+  fetch('http://localhost:3001/api/v1/bookings', {
+    method: 'POST',
+    headers: {'Content-type': 'application/json'},
+    body: JSON.stringify({ userID: customer.id, date: datePicker.value.split('-').join('/'), roomNumber: parseInt(targetRoomNumber) })
+  })
+  .then(response => response.json())
+  .catch(error => console.log(error))
 }
 
   //~~~~~~~~~~~~~~~~~~~~~~~ View Functions ~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,11 +137,6 @@ function displayDashboardView(){
       aboutUsButton,
       dashboardView,
   ])
-  // console.log('x', customer.name)
-  // console.log('y', customer.bookings)
-  // console.log('z', customer.totalMoneySpent)
-  
-  // console.log('jk', bookingData)
 
   dashboardView.innerHTML = 
   `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
@@ -170,9 +177,10 @@ function displayAboutUsView(){
   }
 
   function getAvailableRoomsByDateAndType (){
+    roomPickerErrorMessage.innerText = ''
     let convertedDate = datePicker.value.split('-').join('/')
     let availableRooms = []
-    if (datePicker.value === '') {homepageView.innerHTML += `<p>Please select a date</p>`}
+    if (datePicker.value === '') {roomPickerErrorMessage.innerText = 'Please select a date'}
     let bookedRooms = bookingData.filter((booking)=>{
       if (booking.date.includes(convertedDate)){
         return booking
@@ -186,6 +194,7 @@ function displayAboutUsView(){
         availableRooms.push(room)
       }
     }) 
+    if (availableRooms.length === 0) {roomPickerErrorMessage.innerText = 'There are no rooms available on that date. Please try another day.'}
     console.log('date filtered Rooms:', availableRooms)
     let typeFilteredRooms = availableRooms.filter((room)=>{
       if (typePicker.value === 'any') { 
@@ -194,6 +203,7 @@ function displayAboutUsView(){
         return room
       } 
     })
+    if (typeFilteredRooms.length === 0) {roomPickerErrorMessage.innerText = `There are no ${typePicker.value}s available on this selected date. Please try another kind of room.`}
     typeFilteredRooms.forEach((room)=>{
       searchResultsContainer.innerHTML += `
       <section class="room-to-select">
@@ -207,7 +217,7 @@ function displayAboutUsView(){
         </div>
         <div>
           <h3 class="book-this-room">Book this room for the selected date?</h3>
-          <button tabindex="0" class='book-button' id='bookButton'>Book Room</button>
+          <button tabindex="0" class='book-button' id='${room.number}'>Book Room</button>
         </div>
       </section>`
     })
@@ -218,10 +228,9 @@ function displayAboutUsView(){
 function selectRoomToBook(event) {
   event.preventDefault()
   if (event.target.classList.contains("book-button")) {
-    postBooking()
+    console.log('event target')
+    postBooking(event.target.id)
+    console.log("is it broken yet", bookingData)
   }
 }
 
-function postBooking(){
-  
-}
