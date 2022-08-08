@@ -1,3 +1,27 @@
-body {
+/* body {
   background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
+} */
+button:hover, select:hover {
+  cursor: pointer;
 }
+
+input:hover {
+  cursor: text;
+}
+
+.room-to-select {
+  display: flex;
+  flex-direction: row;
+}
+
+.room-info-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.room-to-select:hover {
+  color: #0827F5;
+  cursor: pointer;
+}
+
+
