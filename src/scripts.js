@@ -119,7 +119,8 @@ function displayLoginView(){
   hide([
       homepageView,
       dashboardView,
-      aboutUsView, 
+      aboutUsView,
+      searchResultsContainer 
 
   ])
   show([
@@ -137,13 +138,12 @@ function displayHomepageView(){
       loginView,
       dashboardView,
       aboutUsView,
-
-      
   ])
   show([
       dashboardButton,
       aboutUsButton,
-      homepageView, 
+      homepageView,
+      searchResultsContainer 
   ])
 }
 
@@ -152,7 +152,8 @@ function displayDashboardView(){
       dashboardButton,
       loginView,
       homepageView,
-      aboutUsView, 
+      aboutUsView,
+      searchResultsContainer 
   ])
   show([
       homepageButton,
@@ -168,6 +169,7 @@ function displayAboutUsView(){
       loginView,
       homepageView,
       dashboardView,
+      searchResultsContainer
   ])
   show([
       homepageButton,
