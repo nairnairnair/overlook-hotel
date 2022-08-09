@@ -40,8 +40,9 @@ let roomData;
 let customer;
 let booking;
 let room;
-let existingBookings;
+let pastBookings;
 let totalMoneySpent;
+let upcomingBookings;
 
 //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -54,16 +55,30 @@ let fetchData = (data) =>  {
 function getPromiseData() {
   Promise.all( [fetchData('customers'), fetchData('bookings'), fetchData('rooms')]).then(data => {
     customerData = data[0].customers;
-    // console.log('a', data[0].customers)
     bookingData = data[1].bookings;
     roomData = data[2].rooms;
-    customer = new Customer(customerData[randomIndex(customerData)]);
-    // console.log('custy', customer)
+    customer = new Customer(customerData[7]);
     booking = new Booking(bookingData);
-    // console.log('book em', booking)
     room = new Room(roomData)
-    // console.log('roomba', room)
-    existingBookings = customer.checkExistingBookings(bookingData)
+    customer.checkAllBookings(bookingData)
+    pastBookings = customer.pastBookings
+    upcomingBookings = customer.futureBookings
+    totalMoneySpent = customer.checkTotalMoneySpent(roomData)
+  })
+}
+
+function getUpdatedPromiseData() {
+  Promise.all( [fetchData('customers'), fetchData('bookings'), fetchData('rooms')]).then(data => {
+    customerData = data[0].customers;
+    bookingData = data[1].bookings;
+    roomData = data[2].rooms;
+    customer.totalMoneySpent = 0;
+    customer.pastBookings = []
+    customer.upcomingBookings = []
+    customer.bookedRooms = []
+    customer.checkAllBookings(bookingData)
+    pastBookings = customer.pastBookings
+    upcomingBookings = customer.futureBookings
     totalMoneySpent = customer.checkTotalMoneySpent(roomData)
   })
 }
@@ -75,6 +90,13 @@ function postBooking(targetRoomNumber){
     body: JSON.stringify({ userID: customer.id, date: datePicker.value.split('-').join('/'), roomNumber: parseInt(targetRoomNumber) })
   })
   .then(response => response.json())
+  .then(response => {
+    customer.checkAllBookings(bookingData)
+    pastBookings = customer.pastBookings
+    upcomingBookings = customer.futureBookings
+    getUpdatedPromiseData()
+    populateDashboardView()
+  })
   .catch(error => console.log(error))
 }
 
@@ -137,13 +159,7 @@ function displayDashboardView(){
       aboutUsButton,
       dashboardView,
   ])
-
-  dashboardView.innerHTML = 
-  `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
-  <p class='dashboard-room-bookings-text'>Your bookings:</p>    
-  <p class='dashboard-room-bookings-info'>${mapBookings()}</p>
-  <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
-  <p class='dashboard-room-cost-total-info'>${totalMoneySpent}</p>`
+  populateDashboardView()
 }
 
 function displayAboutUsView(){
@@ -168,15 +184,28 @@ function displayAboutUsView(){
 
   //~~~~~~~~~~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~~~~~~
 
-  function mapBookings(){
-    let mappedBookings = existingBookings.map((booking)=>{
+  function mapBookings(bookingsToMap){
+    let mappedBookings = '' 
+    mappedBookings = bookingsToMap.map((booking)=>{
       return `Date: ${booking.date} <br />
       Room Number: ${booking.roomNumber} <br />`
     }).join('')
     return mappedBookings
   }
+function populateDashboardView(){
+  dashboardView.innerHTML = ''
+  dashboardView.innerHTML = 
+  `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
+  <p class='dashboard-upcoming-bookings-text'>Your upcoming bookings:</p>    
+  <p class='dashboard-upcoming-bookings-info'>${mapBookings(customer.futureBookings)}</p>
+  <p class='dashboard-past-bookings-text'>Your past bookings:</p>    
+  <p class='dashboard-past-bookings-info'>${mapBookings(customer.pastBookings)}</p>
+  <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
+  <p class='dashboard-room-cost-total-info'>${totalMoneySpent}</p>`
+}
 
   function getAvailableRoomsByDateAndType (){
+    searchResultsContainer.innerHTML = ''
     roomPickerErrorMessage.innerText = ''
     let convertedDate = datePicker.value.split('-').join('/')
     let availableRooms = []
@@ -221,6 +250,8 @@ function displayAboutUsView(){
         </div>
       </section>`
     })
+    getUpdatedPromiseData()
+    populateDashboardView()
     console.log('type filtered Rooms:', typeFilteredRooms)
     return typeFilteredRooms
   }
@@ -228,9 +259,8 @@ function displayAboutUsView(){
 function selectRoomToBook(event) {
   event.preventDefault()
   if (event.target.classList.contains("book-button")) {
-    console.log('event target')
     postBooking(event.target.id)
-    console.log("is it broken yet", bookingData)
+    getAvailableRoomsByDateAndType()
   }
 }
 
