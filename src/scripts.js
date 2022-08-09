@@ -26,6 +26,7 @@ const roomPickerErrorMessage = document.querySelector(".room-picker-error-messag
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
 
 window.addEventListener('load', getPromiseData);
+window.addEventListener('load', displayLoginView);
 homepageButton.addEventListener('click', displayHomepageView);
 dashboardButton.addEventListener('click', displayDashboardView);
 aboutUsButton.addEventListener('click', displayAboutUsView);
@@ -120,15 +121,14 @@ function displayLoginView(){
       homepageView,
       dashboardView,
       aboutUsView,
-      searchResultsContainer 
+      searchResultsContainer,
+      homepageButton,
+      dashboardButton,
+      aboutUsButton, 
 
   ])
   show([
-      homepageButton,
-      dashboardButton,
-      aboutUsButton,
       loginView,
-
   ])
 }
 
