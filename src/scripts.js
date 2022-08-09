@@ -8,7 +8,7 @@ import Booking from '../src/Booking.js';
 import Room from '../src/Room.js';
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Query Selectors ~~~~~~~~~~~~~~~~~~~~~~~
-
+const welcomeMessage = document.querySelector('.welcome-message')
 const homepageButton = document.getElementById('homePageButton');
 const dashboardButton = document.getElementById('dashboardButton');
 const aboutUsButton = document.getElementById('aboutUsButton');
@@ -21,6 +21,10 @@ const typePicker = document.getElementById('typePicker')
 const calendarButton = document.querySelector(".calendar-button")
 const searchResultsContainer = document.querySelector(".search-results-container")
 const roomPickerErrorMessage = document.querySelector(".room-picker-error-message")
+const usernameField = document.getElementById("username")
+const passwordField = document.getElementById("password")
+const loginButton = document.getElementById("loginButton")
+const loginMessage =document.querySelector(".login-message")
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
@@ -32,6 +36,7 @@ dashboardButton.addEventListener('click', displayDashboardView);
 aboutUsButton.addEventListener('click', displayAboutUsView);
 calendarButton.addEventListener('click', getAvailableRoomsByDateAndType);
 searchResultsContainer.addEventListener('click', selectRoomToBook)
+loginButton.addEventListener('click', logIn)
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Global Variables ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -44,6 +49,7 @@ let room;
 let pastBookings;
 let totalMoneySpent;
 let upcomingBookings;
+let logInCounter = 5
 
 //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -266,3 +272,25 @@ function selectRoomToBook(event) {
   }
 }
 
+function logIn(){
+  loginMessage.innerText = ''
+  let failureDate = new Date()
+  let usernameInput = usernameField.value
+  let first8 = usernameInput.slice(0, 8)
+  let last2 = usernameInput.slice(-2)
+  let filteredCusty = customerData.filter(customer=> parseInt(last2) === customer.id)
+  let newCustomer = new Customer(filteredCusty[0])
+  if (first8 === 'customer' && 
+    parseInt(last2) < 51 &&
+    parseInt(last2) != 0 && 
+    passwordField.value === 'overlook2021' &&
+    usernameInput.length === 10){
+  welcomeMessage.innerText = `Welcome, ${newCustomer.name}, to` 
+  displayHomepageView()
+  } else if (logInCounter === 1){
+    loginMessage.innerText = `Wow, I mean, wow. You really do suck at this. Enjoy sleeping in your car. You deserve it. Make a new password? Are you joking? We've had this one since ${failureDate}.`
+  } else {
+    logInCounter--
+    loginMessage.innerText = `Incorrect username or password. You have ${logInCounter} remaining attempt(s).`
+  }
+}
