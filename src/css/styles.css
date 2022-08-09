@@ -1,6 +1,10 @@
 /* body {
   background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
 } */
+.hidden {
+  display: none;
+}
+
 button:hover, select:hover {
   cursor: pointer;
 }
@@ -8,6 +12,11 @@ button:hover, select:hover {
 input:hover {
   cursor: text;
 }
+
+/* .homepage-view {
+  height: 90vw;
+  height: 90vh;
+} */
 
 .room-to-select {
   display: flex;
