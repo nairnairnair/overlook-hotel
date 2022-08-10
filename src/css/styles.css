@@ -1,6 +1,4 @@
-/* body {
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(252,70,107,1) 100%);
-} */
+
 .hidden {
   display: none;
 }
@@ -13,10 +11,10 @@ input:hover {
   cursor: text;
 }
 
-/* .homepage-view {
-  height: 90vw;
-  height: 90vh;
-} */
+.dashboard-view {
+ display:flex;
+ flex-direction: column;
+} 
 
 .room-to-select {
   display: flex;
