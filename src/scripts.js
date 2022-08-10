@@ -1,7 +1,5 @@
 //~~~~~~~~~~~~~~~~~~~~~~~ Imports ~~~~~~~~~~~~~~~~~~~~~~~
 import './css/styles.css';
-// An example of how you tell webpack to use an image (also need to link to it in the index.html)
-import './images/turing-logo.png'
 import './images/h.png'
 import Customer from '../src/Customer.js';
 import Booking from '../src/Booking.js';
@@ -24,7 +22,8 @@ const roomPickerErrorMessage = document.querySelector(".room-picker-error-messag
 const usernameField = document.getElementById("username");
 const passwordField = document.getElementById("password");
 const loginButton = document.getElementById("loginButton");
-const loginMessage =document.querySelector(".login-message");
+const loginMessage = document.querySelector(".login-message");
+const aboutUs = document.querySelector(".about-us")
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
@@ -78,8 +77,7 @@ function getUpdatedPromiseData() {
     pastBookings = customer.pastBookings;
     upcomingBookings = customer.futureBookings;
     totalMoneySpent = customer.checkTotalMoneySpent(roomData);
-    totalMoneySpent
-    console.log("totalMoneySpent at getupdatedpromisedata", totalMoneySpent)
+      totalMoneySpent
     getAvailableRoomsByDateAndType()
     populateDashboardView()
   })
@@ -95,8 +93,6 @@ function postBooking(targetRoomNumber){
   .then(response => getUpdatedPromiseData())
   .catch(error => console.log(error))
 }
-
-//if 
 
   //~~~~~~~~~~~~~~~~~~~~~~~ View Functions ~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -173,35 +169,37 @@ function displayAboutUsView(){
       dashboardButton,
       aboutUsView,
   ]);
-}
-
- //~~~~~~~~~~~~~~~~~~~~~~~ Randomizers ~~~~~~~~~~~~~~~~~~~~~~~
-
- function randomIndex(array) {
-  return Math.floor(Math.random() * array.length);
+  aboutUs.innerText = `Don't ask questions. Especially not about this hotel. The 
+  origins and history of this establishment are none of your concern. Its future is 
+  assured. None still living can affect that. Not you. Especially not you. There are
+  no inert questions. No harmless questions. None will be answered. If you wish to have
+  an ongoing life, one that lasts, ask nothing. See nothing. Be nothing. There are ways
+  to watch without watching. The text reads also into you. The surrounding blankness
+  teems with life. Bright still, black and white, but all light. Glowing darkness, 
+  glowing, glowing... all that you have ever known is darkest light. Step between the voids. 
+  Checkout is at 11.`
 }
 
   //~~~~~~~~~~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~~~~~~
 
   function mapBookings(bookingsToMap){
     let mappedBookings = '' 
-    mappedBookings = bookingsToMap.map((booking)=>{
-      return `Date: ${booking.date} <br />
-      Room Number: ${booking.roomNumber} <br />`
+      mappedBookings = bookingsToMap.map((booking)=>{
+        return `Date: ${booking.date} <br />
+        Room Number: ${booking.roomNumber} <br />`
     }).join('')
     return mappedBookings
   }
 function populateDashboardView(){
   dashboardView.innerHTML = ''
   dashboardView.innerHTML = 
-  `<p class='dashboard-welcome-message'>Hi ${customer.name}, welcome to your dashboard!</p>
-  <p class='dashboard-upcoming-bookings-text'>Your upcoming bookings:</p>    
-  <p class='dashboard-upcoming-bookings-info'>${mapBookings(customer.futureBookings)}</p>
-  <p class='dashboard-past-bookings-text'>Your past bookings:</p>    
-  <p class='dashboard-past-bookings-info'>${mapBookings(customer.pastBookings)}</p>
-  <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
-  <p class='dashboard-room-cost-total-info'>${totalMoneySpent}</p>`
-  console.log('totalmoneyspent at dashboardpop', totalMoneySpent)
+    `<p class='dashboard-welcome-message'>Hi ${customer.name}, your dashboard awaits. Make new bookings on the homepage.</p>
+    <p class='dashboard-upcoming-bookings-text'>Your upcoming bookings:</p>    
+    <p class='dashboard-upcoming-bookings-info'>${mapBookings(customer.futureBookings)}</p>
+    <p class='dashboard-past-bookings-text'>Your past bookings:</p>    
+    <p class='dashboard-past-bookings-info'>${mapBookings(customer.pastBookings)}</p>
+    <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
+    <p class='dashboard-room-cost-total-info'>${totalMoneySpent}</p>`
 }
 
   function getAvailableRoomsByDateAndType (){
@@ -217,14 +215,12 @@ function populateDashboardView(){
     }).map((booking)=>{
       return booking.roomNumber
     })
-    console.log('booked rooms:', bookedRooms)
     roomData.filter((room)=>{
       if (!bookedRooms.includes(room.number)) {
         availableRooms.push(room)
       }
     }) 
     if (availableRooms.length === 0) {roomPickerErrorMessage.innerText = 'There are no rooms available on that date. Please try another day.'}
-    console.log('date filtered Rooms:', availableRooms)
     let typeFilteredRooms = availableRooms.filter((room)=>{
       if (typePicker.value === 'any') { 
         return room
@@ -251,14 +247,12 @@ function populateDashboardView(){
       </section>`
     })
     populateDashboardView()
-    console.log('type filtered Rooms:', typeFilteredRooms)
     return typeFilteredRooms
   }
 
 function selectRoomToBook(event) {
   event.preventDefault()
   if (event.target.classList.contains("book-button")) {
-    console.log('downcoming', upcomingBookings.userID && upcomingBookings)
     postBooking(event.target.id)
     getAvailableRoomsByDateAndType()
   }
@@ -281,15 +275,14 @@ function logIn(){
     pastBookings = customer.pastBookings;
     upcomingBookings = customer.futureBookings;
     totalMoneySpent = customer.checkTotalMoneySpent(roomData);
-    totalMoneySpent
-    console.log("totalMoneySpent at login", totalMoneySpent)
-  welcomeMessage.innerText = `Welcome, ${customer.name}, to` 
-  displayDashboardView()
+      totalMoneySpent
+    welcomeMessage.innerText = `Welcome, ${customer.name}, to` 
+    displayDashboardView()
   } else if (logInCounter === 1){
     loginMessage.innerText = 
-    `"Where's the Reset Your Password button?" You customers are all the same. It's enough to make a man sick. 
-    Hotel HTML has leaned on our single stalwart password for years, dating back as early as ${failureDate}... or perhaps longer.
-    You have been deemed unworthy. Come back when you can remember that the password is overlook2021.`
+      `"Where's the Reset Your Password button?" You customers are all the same. It's enough to make a man sick. 
+      Hotel HTML has leaned on our single stalwart password for years, dating back as early as ${failureDate}... or perhaps longer.
+      You have been deemed unworthy. Come back when you can remember that the password is overlook2021.`
   } else {
     logInCounter--
     loginMessage.innerText = `Incorrect username or password. You have ${logInCounter} remaining attempt(s).`
