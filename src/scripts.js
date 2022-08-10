@@ -8,7 +8,7 @@ import Booking from '../src/Booking.js';
 import Room from '../src/Room.js';
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Query Selectors ~~~~~~~~~~~~~~~~~~~~~~~
-const welcomeMessage = document.querySelector('.welcome-message')
+const welcomeMessage = document.querySelector('.welcome-message');
 const homepageButton = document.getElementById('homePageButton');
 const dashboardButton = document.getElementById('dashboardButton');
 const aboutUsButton = document.getElementById('aboutUsButton');
@@ -17,14 +17,14 @@ const homepageView = document.querySelector('.homepage-view');
 const dashboardView = document.querySelector('.dashboard-view');
 const aboutUsView = document.querySelector('.about-us-view');
 const datePicker = document.getElementById("datePicker");
-const typePicker = document.getElementById('typePicker')
-const calendarButton = document.querySelector(".calendar-button")
-const searchResultsContainer = document.querySelector(".search-results-container")
-const roomPickerErrorMessage = document.querySelector(".room-picker-error-message")
-const usernameField = document.getElementById("username")
-const passwordField = document.getElementById("password")
-const loginButton = document.getElementById("loginButton")
-const loginMessage =document.querySelector(".login-message")
+const typePicker = document.getElementById('typePicker');
+const calendarButton = document.querySelector(".calendar-button");
+const searchResultsContainer = document.querySelector(".search-results-container");
+const roomPickerErrorMessage = document.querySelector(".room-picker-error-message");
+const usernameField = document.getElementById("username");
+const passwordField = document.getElementById("password");
+const loginButton = document.getElementById("loginButton");
+const loginMessage =document.querySelector(".login-message");
 
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Event Listeners ~~~~~~~~~~~~~~~~~~~~~~~
@@ -35,8 +35,8 @@ homepageButton.addEventListener('click', displayHomepageView);
 dashboardButton.addEventListener('click', displayDashboardView);
 aboutUsButton.addEventListener('click', displayAboutUsView);
 calendarButton.addEventListener('click', getAvailableRoomsByDateAndType);
-searchResultsContainer.addEventListener('click', selectRoomToBook)
-loginButton.addEventListener('click', logIn)
+searchResultsContainer.addEventListener('click', selectRoomToBook);
+loginButton.addEventListener('click', logIn);
 
 //~~~~~~~~~~~~~~~~~~~~~~~ Global Variables ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -44,12 +44,10 @@ let customerData;
 let bookingData;
 let roomData;
 let customer;
-let booking;
-let room;
 let pastBookings;
 let totalMoneySpent;
 let upcomingBookings;
-let logInCounter = 5
+let logInCounter = 5;
 
 //~~~~~~~~~~~~~~~~~~~~~~~ API Calls ~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -64,13 +62,6 @@ function getPromiseData() {
     customerData = data[0].customers;
     bookingData = data[1].bookings;
     roomData = data[2].rooms;
-    customer = new Customer(customerData[7]);
-    booking = new Booking(bookingData);
-    room = new Room(roomData)
-    customer.checkAllBookings(bookingData)
-    pastBookings = customer.pastBookings
-    upcomingBookings = customer.futureBookings
-    totalMoneySpent = customer.checkTotalMoneySpent(roomData)
   })
 }
 
@@ -80,13 +71,17 @@ function getUpdatedPromiseData() {
     bookingData = data[1].bookings;
     roomData = data[2].rooms;
     customer.totalMoneySpent = 0;
-    customer.pastBookings = []
-    customer.upcomingBookings = []
-    customer.bookedRooms = []
-    customer.checkAllBookings(bookingData)
-    pastBookings = customer.pastBookings
-    upcomingBookings = customer.futureBookings
-    totalMoneySpent = customer.checkTotalMoneySpent(roomData)
+    customer.pastBookings = [];
+    customer.upcomingBookings = [];
+    customer.bookedRooms = [];
+    customer.checkAllBookings(bookingData);
+    pastBookings = customer.pastBookings;
+    upcomingBookings = customer.futureBookings;
+    totalMoneySpent = customer.checkTotalMoneySpent(roomData);
+    totalMoneySpent
+    console.log("totalMoneySpent at getupdatedpromisedata", totalMoneySpent)
+    getAvailableRoomsByDateAndType()
+    populateDashboardView()
   })
 }
 
@@ -97,15 +92,11 @@ function postBooking(targetRoomNumber){
     body: JSON.stringify({ userID: customer.id, date: datePicker.value.split('-').join('/'), roomNumber: parseInt(targetRoomNumber) })
   })
   .then(response => response.json())
-  .then(response => {
-    customer.checkAllBookings(bookingData)
-    pastBookings = customer.pastBookings
-    upcomingBookings = customer.futureBookings
-    getUpdatedPromiseData()
-    populateDashboardView()
-  })
+  .then(response => getUpdatedPromiseData())
   .catch(error => console.log(error))
 }
+
+//if 
 
   //~~~~~~~~~~~~~~~~~~~~~~~ View Functions ~~~~~~~~~~~~~~~~~~~~~~~
   
@@ -132,10 +123,10 @@ function displayLoginView(){
       dashboardButton,
       aboutUsButton, 
 
-  ])
+  ]);
   show([
       loginView,
-  ])
+  ]);
 }
 
 function displayHomepageView(){
@@ -144,13 +135,13 @@ function displayHomepageView(){
       loginView,
       dashboardView,
       aboutUsView,
-  ])
+  ]);
   show([
       dashboardButton,
       aboutUsButton,
       homepageView,
       searchResultsContainer 
-  ])
+  ]);
 }
 
 function displayDashboardView(){
@@ -160,12 +151,12 @@ function displayDashboardView(){
       homepageView,
       aboutUsView,
       searchResultsContainer 
-  ])
+  ]);
   show([
       homepageButton,
       aboutUsButton,
       dashboardView,
-  ])
+  ]);
   populateDashboardView()
 }
 
@@ -176,12 +167,12 @@ function displayAboutUsView(){
       homepageView,
       dashboardView,
       searchResultsContainer
-  ])
+  ]);
   show([
       homepageButton,
       dashboardButton,
       aboutUsView,
-  ])
+  ]);
 }
 
  //~~~~~~~~~~~~~~~~~~~~~~~ Randomizers ~~~~~~~~~~~~~~~~~~~~~~~
@@ -210,6 +201,7 @@ function populateDashboardView(){
   <p class='dashboard-past-bookings-info'>${mapBookings(customer.pastBookings)}</p>
   <p class='dashboard-room-cost-total-text'>Your total amount spent on rooms:</p>
   <p class='dashboard-room-cost-total-info'>${totalMoneySpent}</p>`
+  console.log('totalmoneyspent at dashboardpop', totalMoneySpent)
 }
 
   function getAvailableRoomsByDateAndType (){
@@ -240,7 +232,7 @@ function populateDashboardView(){
         return room
       } 
     })
-    if (typeFilteredRooms.length === 0) {roomPickerErrorMessage.innerText = `There are no ${typePicker.value}s available on this selected date. Please try another kind of room.`}
+    if (typeFilteredRooms.length === 0) {roomPickerErrorMessage.innerText = `There are no ${typePicker.value}s available on this selected date. Please try another kind of room.`};
     typeFilteredRooms.forEach((room)=>{
       searchResultsContainer.innerHTML += `
       <section class="room-to-select">
@@ -258,7 +250,6 @@ function populateDashboardView(){
         </div>
       </section>`
     })
-    getUpdatedPromiseData()
     populateDashboardView()
     console.log('type filtered Rooms:', typeFilteredRooms)
     return typeFilteredRooms
@@ -267,28 +258,38 @@ function populateDashboardView(){
 function selectRoomToBook(event) {
   event.preventDefault()
   if (event.target.classList.contains("book-button")) {
+    console.log('downcoming', upcomingBookings.userID && upcomingBookings)
     postBooking(event.target.id)
     getAvailableRoomsByDateAndType()
   }
 }
 
 function logIn(){
-  loginMessage.innerText = ''
-  let failureDate = new Date()
-  let usernameInput = usernameField.value
-  let first8 = usernameInput.slice(0, 8)
-  let last2 = usernameInput.slice(-2)
-  let filteredCusty = customerData.filter(customer=> parseInt(last2) === customer.id)
-  let newCustomer = new Customer(filteredCusty[0])
+  loginMessage.innerText = '';
+  let failureDate = new Date();
+  let usernameInput = usernameField.value;
+  let first8 = usernameInput.slice(0, 8);
+  let last2 = usernameInput.slice(-2);
+  let filteredCusty = customerData.filter(customer=> parseInt(last2) === customer.id);
   if (first8 === 'customer' && 
     parseInt(last2) < 51 &&
     parseInt(last2) != 0 && 
     passwordField.value === 'overlook2021' &&
     usernameInput.length === 10){
-  welcomeMessage.innerText = `Welcome, ${newCustomer.name}, to` 
-  displayHomepageView()
+    customer = new Customer(filteredCusty[0]);
+    customer.checkAllBookings(bookingData);
+    pastBookings = customer.pastBookings;
+    upcomingBookings = customer.futureBookings;
+    totalMoneySpent = customer.checkTotalMoneySpent(roomData);
+    totalMoneySpent
+    console.log("totalMoneySpent at login", totalMoneySpent)
+  welcomeMessage.innerText = `Welcome, ${customer.name}, to` 
+  displayDashboardView()
   } else if (logInCounter === 1){
-    loginMessage.innerText = `Wow, I mean, wow. You really do suck at this. Enjoy sleeping in your car. You deserve it. Make a new password? Are you joking? We've had this one since ${failureDate}.`
+    loginMessage.innerText = 
+    `"Where's the Reset Your Password button?" You customers are all the same. It's enough to make a man sick. 
+    Hotel HTML has leaned on our single stalwart password for years, dating back as early as ${failureDate}... or perhaps longer.
+    You have been deemed unworthy. Come back when you can remember that the password is overlook2021.`
   } else {
     logInCounter--
     loginMessage.innerText = `Incorrect username or password. You have ${logInCounter} remaining attempt(s).`
